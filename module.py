@@ -82,3 +82,39 @@ class Net(nn.Module):
 
         return F.log_softmax(x, dim=1)
     
+
+
+
+
+
+def train_loop(train_loader,model,loss_fn,optimizer):
+
+    for b,(x_train,y_train) in enumerate(train_loader):
+        pred = model(x_train)
+        loss  = loss_fn(pred,y_train)
+
+ 
+        loss.backward() #computing gradients 
+        optimizer.step() #updating params
+        optimizer.zero_grad() #reset
+
+        if b%100  == 0:
+            print(f' loss: {loss.item()}')
+
+
+
+
+
+
+model = Net()
+
+epochs = 5
+learning_rate = 0.001
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+for i in range(epochs):
+    print(f'Epoch {i+1}')
+    train_loop(train_loader, model, loss_fn, optimizer)
+print('done')
