@@ -16,10 +16,10 @@ test_data = datasets.CIFAR10(root='./data',train=False,download=True,
 
 # batches 
 train_loader = torch.utils.data.DataLoader(train_data,
-                                         batch_size=32,
+                                         batch_size=128,
                                          shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_data,
-                                         batch_size=32,
+                                         batch_size=128,
                                          shuffle=True)
 
 
@@ -84,10 +84,11 @@ class Net(nn.Module):
     
 
 
+train_losses = []
+test_losses = []
 
 
-
-def train_loop(train_loader,model,loss_fn,optimizer):
+def train_loop(train_loader,model,loss_fn,optimizer,train_losses):
 
     for b,(x_train,y_train) in enumerate(train_loader):
         pred = model(x_train)
@@ -100,6 +101,16 @@ def train_loop(train_loader,model,loss_fn,optimizer):
 
         if b%100  == 0:
             print(f' loss: {loss.item()}')
+    train_losses.append(loss)
+
+def test_loop(test_loader,model, loss_fn, test_losses):
+    model.eval()
+    with torch.no_grad():
+        for b, (x_test,y_test) in enumerate(test_loader):
+            pred = model(x_test)
+            loss = loss_fn(pred, y_test)
+            print(f'test losses : {loss.item()}')
+    test_losses.append(loss)
 
 
 
@@ -108,13 +119,27 @@ def train_loop(train_loader,model,loss_fn,optimizer):
 
 model = Net()
 
-epochs = 5
+epochs = 10
 learning_rate = 0.001
 
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+
+
 for i in range(epochs):
     print(f'Epoch {i+1}')
-    train_loop(train_loader, model, loss_fn, optimizer)
+    train_loop(train_loader, model, loss_fn, optimizer,train_losses)
+    test_loop(test_loader, model , loss_fn,test_losses)
 print('done')
+
+
+
+train_losses = [t1.item() for t1 in train_losses]
+plt.plot(train_losses, label='train losses')
+plt.plot(test_losses, label='test losses ')
+plt.legend()
+plt.show()
+
+
+
