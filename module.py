@@ -120,7 +120,7 @@ def test_loop(test_loader,model, loss_fn, test_losses):
 model = Net()
 
 epochs = 10
-learning_rate = 0.001
+learning_rate = 0.0001
 
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -133,7 +133,8 @@ for i in range(epochs):
     test_loop(test_loader, model , loss_fn,test_losses)
 print('done')
 
-
+PATH = 'model_weights.pth'
+torch.save(model.state_dict(),PATH)
 
 train_losses = [t1.item() for t1 in train_losses]
 plt.plot(train_losses, label='train losses')
