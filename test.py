@@ -23,20 +23,27 @@ test_loader = torch.utils.data.DataLoader(test_data,
                                          shuffle=True)
 # train loader is 4dim 
 
-image, label = train_data[0]
-print(image.shape) #one image and its label ---> [3,32,32]
-print(label)
+# image, label = train_data[0]
+# print(image.shape) #one image and its label ---> [3,32,32]
+# print(label)
 
+# Check the shape of train_data
+print(f"Train data shape: {train_data.data.shape}")  # For CIFAR-10, this will be (50000, 32, 32, 3)
 
+# Check the shape of a batch from train_loader
+for images, labels in train_loader:
+    print(f"Train loader batch shape: {images.shape}")  # Expected: [batch_size, channels, height, width]
+    print(f"Labels batch shape: {labels.shape}")       # Expected: [batch_size]
+    break  # Only check the first batch
 
 # images, labels = next(iter(train_data))
 # print(images.shape) #batch of 32 images ---> [32,3,32,32]
 # print(labels.shape) # 32 labels
 
 
-plt.imshow(image.permute(1,2,0))            #image is blury from normalizing the image
-plt.title(f'label: {label}')
-plt.show()
+# plt.imshow(image.permute(1,2,0))            #image is blury from normalizing the image
+# plt.title(f'label: {label}')
+# plt.show()
 
 # for i,(x,y) in enumerate(train_data):
 #     break
